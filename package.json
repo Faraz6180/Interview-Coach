@@ -1,18 +1,30 @@
 {
   "name": "interview-coach",
   "version": "1.0.0",
-  "description": "AI-Powered Interview Coach",
+  "description": "Pakistan's First AI-Powered Interview Trainer",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js"
   },
+  "keywords": [
+    "interview",
+    "ai",
+    "coach",
+    "pakistan",
+    "jobs"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
   "dependencies": {
     "express": "^4.18.2",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1"
   },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
   "engines": {
-    "node": "18.x"
+    "node": "24.x"
   }
 }
