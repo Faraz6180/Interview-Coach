@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Interview Coach - Pakistan's #1 AI Interview Trainer</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Supabase JS Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="spinner"></div>
+        <p>Loading Interview Coach...</p>
+    </div>
+
+    <!-- Main App Container -->
+    <div id="app" style="display: none;">
+        
+        <!-- Navigation Bar -->
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="logo">
+                    <span class="logo-icon">🎤</span>
+                    <span class="logo-text">Interview Coach</span>
+                </div>
+                <div class="nav-right">
+                    <button id="languageToggle" class="btn-secondary">اردو</button>
+                    <button id="logoutBtn" class="btn-secondary">Logout</button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Auth Screen (Login/Signup) -->
+        <div id="authScreen" class="auth-screen">
+            <div class="auth-container">
+                <div class="auth-header">
+                    <h1>🎯 Master Your Interview Skills</h1>
+                    <p>Pakistan's First AI-Powered Interview Coach</p>
+                    <p class="subtitle">Practice with AI • Get Instant Feedback • Land Your Dream Job</p>
+                </div>
+
+                <div class="auth-tabs">
+                    <button id="loginTab" class="auth-tab active">Login</button>
+                    <button id="signupTab" class="auth-tab">Sign Up</button>
+                </div>
+
+                <!-- Login Form -->
+                <form id="loginForm" class="auth-form">
+                    <input type="email" id="loginEmail" placeholder="Email" required>
+                    <input type="password" id="loginPassword" placeholder="Password" required>
+                    <button type="submit" class="btn-primary">Login</button>
+                    <p class="auth-error" id="loginError"></p>
+                </form>
+
+                <!-- Signup Form -->
+                <form id="signupForm" class="auth-form" style="display: none;">
+                    <input type="email" id="signupEmail" placeholder="Email" required>
+                    <input type="password" id="signupPassword" placeholder="Password (min 6 characters)" required>
+                    <input type="password" id="signupConfirm" placeholder="Confirm Password" required>
+                    <button type="submit" class="btn-primary">Create Account</button>
+                    <p class="auth-error" id="signupError"></p>
+                </form>
+
+                <div class="auth-features">
+                    <div class="feature-item">✅ 3 Free Sessions Daily</div>
+                    <div class="feature-item">✅ AI-Powered Feedback</div>
+                    <div class="feature-item">✅ English & Urdu Support</div>
+                    <div class="feature-item">✅ Track Your Progress</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Dashboard -->
+        <div id="dashboard" style="display: none;">
+            
+            <!-- Usage Banner -->
+            <div class="usage-banner">
+                <div class="usage-info">
+                    <span id="sessionsLeftText">Sessions left today: <strong id="sessionsLeft">3</strong></span>
+                    <span id="premiumBadge" style="display: none;" class="premium-badge">⭐ Premium</span>
+                </div>
+                <button id="upgradBtn" class="btn-upgrade" style="display: none;">
+                    Upgrade to Premium - $2/month
+                </button>
+            </div>
+
+            <!-- Main Content Grid -->
+            <div class="main-grid">
+                
+                <!-- Left Panel: Practice Session -->
+                <div class="panel practice-panel">
+                    <h2 class="panel-title" data-en="🎤 Practice Interview" data-ur="🎤 Interview Ki Practice">
+                        🎤 Practice Interview
+                    </h2>
+
+                    <!-- Job Role Input (NEW!) -->
+                    <div class="job-input-section">
+                        <h3 class="section-title" data-en="🎯 What job are you preparing for?" 
+                            data-ur="🎯 Aap kis job ke liye tayyari kar rahe hain?">
+                            🎯 What job are you preparing for?
+                        </h3>
+                        
+                        <div class="input-group">
+                            <input type="text" id="jobTitle" class="job-input" 
+                                   placeholder="e.g., Software Engineer, Customer Service, Sales Manager"
+                                   data-en-placeholder="e.g., Software Engineer, Customer Service, Sales Manager"
+                                   data-ur-placeholder="Misal: Software Engineer, Customer Service, Sales Manager">
+                            
+                            <select id="experienceLevel" class="experience-select">
+                                <option value="entry">Entry Level / Fresher</option>
+                                <option value="1-3">1-3 years experience</option>
+                                <option value="3-5">3-5 years experience</option>
+                                <option value="5+">5+ years experience</option>
+                            </select>
+                            
+                            <button id="generateQuestionsBtn" class="btn-generate">
+                                <span data-en="✨ Generate Questions with AI" 
+                                      data-ur="✨ AI se Sawaal Banayein">
+                                    ✨ Generate Questions with AI
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Resume Analyzer Section (NEW!) -->
+                    <div class="resume-section">
+                        <div class="section-header">
+                            <h3 class="section-title" data-en="📄 Or Upload Your Resume for Personalized Questions" 
+                                data-ur="📄 Ya Apna Resume Upload Karein">
+                                📄 Or Upload Your Resume for Personalized Questions
+                            </h3>
+                            <p class="section-subtitle" data-en="AI will generate questions based on YOUR experience" 
+                               data-ur="AI aapke experience ke mutabiq sawaal banayega">
+                                AI will generate questions based on YOUR experience
+                            </p>
+                        </div>
+                        
+                        <div class="resume-input-group">
+                            <textarea id="resumeText" class="resume-textarea" 
+                                      placeholder="Paste your resume text here (education, experience, skills, projects)..."
+                                      data-en-placeholder="Paste your resume text here (education, experience, skills, projects)..."
+                                      data-ur-placeholder="Apna resume text yahan paste karein (education, experience, skills, projects)..."
+                                      rows="8"></textarea>
+                            
+                            <button id="analyzeResumeBtn" class="btn-analyze-resume">
+                                <span data-en="🤖 Analyze Resume & Generate Questions" 
+                                      data-ur="🤖 Resume Analyze Karein">
+                                    🤖 Analyze Resume & Generate Questions
+                                </span>
+                            </button>
+                        </div>
+                        
+                        <!-- Resume Analysis Results -->
+                        <div id="resumeAnalysisResults" class="resume-results" style="display: none;">
+                            <h4 data-en="📊 Resume Analysis:" data-ur="📊 Resume Ka Tahleel:">📊 Resume Analysis:</h4>
+                            <div id="resumeDataDisplay" class="resume-data"></div>
+                        </div>
+                    </div>
+
+                    <div class="divider">
+                        <span data-en="OR" data-ur="YA">OR</span>
+                    </div>
+
+                    <!-- Question Selector -->
+                    <div class="question-section" id="questionSection" style="display: none;">
+                        <label data-en="Choose a question:" data-ur="Sawal chuniye:">Choose a question:</label>
+                        <select id="questionSelect" class="question-select">
+                            <option value="">Select a question...</option>
+                        </select>
+                        <p class="hint" data-en="Or type your own question below" data-ur="Ya apna sawal neeche likhiye">
+                            Or type your own question below
+                        </p>
+                        <input type="text" id="customQuestion" class="custom-question" 
+                               placeholder="E.g., Tell me about a time you solved a problem">
+                    </div>
+
+                    <!-- Recording Section -->
+                    <div class="recording-section">
+                        <div class="record-status" id="recordStatus">
+                            <span class="status-dot"></span>
+                            <span data-en="Ready to record" data-ur="Record karne ke liye tayyar">Ready to record</span>
+                        </div>
+                        
+                        <button id="recordBtn" class="btn-record">
+                            <span class="record-icon">🎙️</span>
+                            <span data-en="Start Recording" data-ur="Recording Shuru Karein">Start Recording</span>
+                        </button>
+
+                        <div id="transcriptBox" class="transcript-box" style="display: none;">
+                            <h4 data-en="Your Answer:" data-ur="Aapka Jawab:">Your Answer:</h4>
+                            <p id="transcriptText"></p>
+                        </div>
+
+                        <button id="analyzeBtn" class="btn-primary" style="display: none;">
+                            <span data-en="Analyze My Answer" data-ur="Mera Jawab Check Karein">Analyze My Answer</span>
+                        </button>
+                    </div>
+
+                    <!-- Timer Display -->
+                    <div id="timerDisplay" class="timer-display" style="display: none;">
+                        <span class="timer-label" data-en="Recording:" data-ur="Record ho raha hai:">Recording:</span>
+                        <span id="timerText" class="timer-text">00:00</span>
+                    </div>
+                </div>
+
+                <!-- Right Panel: Results & History -->
+                <div class="panel results-panel">
+                    <div class="tabs">
+                        <button id="resultsTab" class="tab active" data-en="📊 Results" data-ur="📊 Natija">
+                            📊 Results
+                        </button>
+                        <button id="historyTab" class="tab" data-en="📚 History" data-ur="📚 Purane Sessions">
+                            📚 History
+                        </button>
+                    </div>
+
+                    <!-- Results View -->
+                    <div id="resultsView" class="tab-content">
+                        <div class="empty-state">
+                            <div class="empty-icon">🎯</div>
+                            <h3 data-en="No results yet" data-ur="Abhi koi result nahi">No results yet</h3>
+                            <p data-en="Record an answer and get instant AI feedback!" 
+                               data-ur="Apna jawab record karein aur foran AI feedback payen!">
+                                Record an answer and get instant AI feedback!
+                            </p>
+                        </div>
+
+                        <!-- Results will be shown here after analysis -->
+                        <div id="resultsContent" style="display: none;">
+                            <!-- Score Cards -->
+                            <div class="score-grid">
+                                <div class="score-card">
+                                    <div class="score-label" data-en="Clarity" data-ur="Safai">Clarity</div>
+                                    <div class="score-value" id="scoreClarity">0</div>
+                                    <div class="score-bar">
+                                        <div class="score-fill" id="barClarity"></div>
+                                    </div>
+                                </div>
+                                <div class="score-card">
+                                    <div class="score-label" data-en="Structure" data-ur="Tertib">Structure</div>
+                                    <div class="score-value" id="scoreStructure">0</div>
+                                    <div class="score-bar">
+                                        <div class="score-fill" id="barStructure"></div>
+                                    </div>
+                                </div>
+                                <div class="score-card">
+                                    <div class="score-label" data-en="Content" data-ur="Muhtawa">Content</div>
+                                    <div class="score-value" id="scoreContent">0</div>
+                                    <div class="score-bar">
+                                        <div class="score-fill" id="barContent"></div>
+                                    </div>
+                                </div>
+                                <div class="score-card overall">
+                                    <div class="score-label" data-en="Overall" data-ur="Kul">Overall</div>
+                                    <div class="score-value" id="scoreOverall">0</div>
+                                    <div class="score-bar">
+                                        <div class="score-fill" id="barOverall"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Feedback Section -->
+                            <div class="feedback-section">
+                                <div id="feedbackEnglish" class="feedback-content">
+                                    <h3>📝 Detailed Feedback</h3>
+                                    <div id="feedbackEnglishText"></div>
+                                </div>
+                                <div id="feedbackUrdu" class="feedback-content" style="display: none;">
+                                    <h3>📝 Tafsili Raye</h3>
+                                    <div id="feedbackUrduText"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- History View -->
+                    <div id="historyView" class="tab-content" style="display: none;">
+                        <div id="historyList" class="history-list">
+                            <p data-en="Loading history..." data-ur="History load ho rahi hai...">Loading history...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="app.js"></script>
+</body>
+</html>
